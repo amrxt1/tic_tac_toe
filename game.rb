@@ -43,11 +43,27 @@ module Rules
         !board.board.include?(position)        
     end
     
-    def win? (player)
-        str = player.positions_taken.sort.join
-        if str.include?('123') || str.include?('456') || str.include?('789') || str.include?('147') || str.include?('258')||str.include?('369')||str.include?('159')||str.include?('357')
-            print "win"
-        end
+    def win? (player,board)
+        ps = player.positions_taken
+        arr_win = [
+            [1,2,3],
+            [4,5,6],
+            [7,8,9],
+            [1,4,7],
+            [2,5,8],
+            [3,6,9],
+            [1,5,9],
+            [3,5,7]
+        ]
+        arr_win.each { |y|
+            if (y-ps).empty?
+                puts player.name+" has won!!"
+                board.display_board
+                return true
+            end
+        }
+        return false
+
     end
 end
 
@@ -65,35 +81,45 @@ class Game
         
         puts @players[@@turn].name+"'s turn, enter the position you wish to take (1-9)"
         position = gets[0].chomp.to_i
-
+        
         if taken?(position, @board)
             puts "position already taken"
             round()
         else
             @players[@@turn].positions_taken.push(position)
             pp @players
-
+            
             @board.board_update((position-1),@players[@@turn].symbol)
+            
+            tmp = @@turn
+            @@turn.even? ? (@@turn += 1) : (@@turn -= 1)
 
-            win?(@players[@@turn])
-
+            return win?(@players[tmp],@board)
+            
         end
     end
 end
 
 
 
-#puts "Enter the name for player 1"
-#tmp = gets.chomp
+puts "Enter the name for player 1 (x)"
+tmp = gets.chomp
 #puts "Please select your symbol (X or O)"
 #symbol = gets.chomp
-p1 = Player.new('play1', 'x')
+p1 = Player.new(tmp, 'x')
 
-p2 = Player.new('play2','o')
+puts "Enter the name for player 2 (o)"
+tmp = gets.chomp
+p2 = Player.new(tmp,'o')
 board = Board.new
 
 game = Game.new([p1,p2],board)
 
+x = nil
 loop do
-game.round()
+    x = game.round()
+    if x 
+        break
+    end
 end
+
