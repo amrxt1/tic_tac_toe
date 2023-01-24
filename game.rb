@@ -1,7 +1,7 @@
 class Board
     attr_accessor :board
     def initialize
-        @board = [1,'x',3,4,5,6,7,8,9]
+        @board = [1,2,3,4,5,6,7,8,9]
     end
 
     def display_board()
@@ -43,6 +43,12 @@ module Rules
         !board.board.include?(position)        
     end
     
+    def win? (player)
+        str = player.positions_taken.sort.join
+        if str.include?('123') || str.include?('456') || str.include?('789') || str.include?('147') || str.include?('258')||str.include?('369')||str.include?('159')||str.include?('357')
+            print "win"
+        end
+    end
 end
 
 class Game
@@ -68,6 +74,9 @@ class Game
             pp @players
 
             @board.board_update((position-1),@players[@@turn].symbol)
+
+            win?(@players[@@turn])
+
         end
     end
 end
@@ -84,4 +93,7 @@ p2 = Player.new('play2','o')
 board = Board.new
 
 game = Game.new([p1,p2],board)
+
+loop do
 game.round()
+end
