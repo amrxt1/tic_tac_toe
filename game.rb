@@ -72,7 +72,12 @@ module Rules
             end
         }
         return false
+    end
 
+    def draw?(board)
+        !board.board.any?{ |b|
+            b.is_a? Integer
+        }
     end
 end
 
@@ -96,14 +101,15 @@ class Game
             round()
         else
             @players[@@turn].positions_taken.push(position)
-            pp @players
+            puts `clear`
             
             @board.board_update((position-1),@players[@@turn].symbol)
             
             tmp = @@turn
             @@turn.even? ? (@@turn += 1) : (@@turn -= 1)
 
-            return win?(@players[tmp],@board)
+
+            return [ win?(@players[tmp],@board), draw?(@board)]
             
         end
     end
@@ -127,13 +133,14 @@ def play_again?
 end
 
 ######################################
-
+puts `clear`
 puts "Enter the name for player 1 (x)"
 tmp = gets.chomp
 #puts "Please select your symbol (X or O)"
 #symbol = gets.chomp
 p1 = Player.new(tmp, 'x') 
 
+puts `clear`
 puts "Enter the name for player 2 (o)"
 tmp = gets.chomp
 p2 = Player.new(tmp,'o')
@@ -141,11 +148,20 @@ board = Board.new
 
 game = Game.new([p1,p2],board)
 
-x = nil
+puts `clear`
 
 loop do
     loop do
-        if game.round()
+        draw, round = game.round()
+        if draw
+            puts "Its a draw."
+            puts "#######SCORE BOARD########"
+            puts p1.name+" : "+p1.score.to_s
+            puts p2.name+" : "+p2.score.to_s
+            break
+        end
+
+        if round
             puts "#######SCORE BOARD########"
             puts p1.name+" : "+p1.score.to_s
             puts p2.name+" : "+p2.score.to_s
