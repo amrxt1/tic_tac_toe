@@ -109,7 +109,7 @@ class Game
             @@turn.even? ? (@@turn += 1) : (@@turn -= 1)
 
 
-            return [ win?(@players[tmp],@board), draw?(@board)]
+            return [ draw?(@board), win?(@players[tmp],@board)]
             
         end
     end
@@ -176,5 +176,4 @@ loop do
         break
     end
 end
-
 
